@@ -2,14 +2,17 @@ importScripts('https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js'
 importScripts('https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js');
 
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
-};
+ const firebaseConfig = {
+    apiKey: "AIzaSyCzRVRcAdi2Fyk4aQA0iysvwl2aIqD5h4w",
+    authDomain: "gcextension-37458.firebaseapp.com",
+    projectId: "gcextension-37458",
+    storageBucket: "gcextension-37458.firebasestorage.app",
+    messagingSenderId: "982257392737",
+    appId: "1:982257392737:web:6c274d9c5401f5278a5e20",
+    measurementId: "G-4BD9H69CCW"
+  };
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
