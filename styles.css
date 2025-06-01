@@ -1,0 +1,9 @@
+.folder-link {
+  padding: 8px;
+  margin: 4px 0;
+  transition: background-color 0.2s;
+}
+
+.folder-link:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}

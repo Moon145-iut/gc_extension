@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "Google Classroom Folder Organizer",
   "version": "1.0",
+  "description": "Organize Google Classroom folders efficiently",
   "permissions": ["storage", "scripting", "identity", "activeTab"],
   "host_permissions": ["https://classroom.google.com/*"],
   "background": {
@@ -10,8 +11,17 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icon.png"
+      "16": "icon.png",
+      "32": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
     }
+  },
+  "icons": {
+    "16": "icon.png",
+    "32": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
   },
   "content_scripts": [
     {

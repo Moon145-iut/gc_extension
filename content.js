@@ -1,20 +1,51 @@
 (async () => {
+  // Wait for the page to be fully loaded
+  if (document.readyState !== 'complete') {
+    await new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
+  }
+
+  // Try to authenticate
   const user = await new Promise(resolve => {
-    chrome.runtime.sendMessage({ type: 'sign-in' }, res => resolve(res.user));
+    chrome.runtime.sendMessage({ type: 'sign-in' }, res => {
+      if (res.error) {
+        console.error('Authentication error:', res.error);
+        resolve(null);
+      } else {
+        resolve(res.user);
+      }
+    });
   });
 
+  if (!user) {
+    console.error('Failed to authenticate user');
+    return;
+  }
+
+  // Get user folders
   const uid = user.uid;
   let folders = await new Promise(resolve => {
-    chrome.runtime.sendMessage({ type: 'get-folders', uid }, res => resolve(res.folders));
+    chrome.runtime.sendMessage({ type: 'get-folders', uid }, res => {
+      if (res.error) {
+        console.error('Error getting folders:', res.error);
+        resolve({});
+      } else {
+        resolve(res.folders || {});
+      }
+    });
   });
+  // Find the sidebar - try multiple selectors as Google Classroom's structure might vary
+  const sidebar = document.querySelector('[role="navigation"], .QRiHXd');
+  if (!sidebar) {
+    console.error('Could not find Google Classroom sidebar');
+    return;
+  }
 
-  const sidebar = document.querySelector('[role="navigation"]');
-  if (!sidebar) return;
-
+  // Create and append folder header
   const folderHeader = document.createElement('div');
   folderHeader.textContent = '📁 My Folders';
   folderHeader.style.margin = '10px';
   folderHeader.style.fontWeight = 'bold';
+  folderHeader.style.color = 'var(--mdc-theme-text-primary-on-background,#3c4043)';
   sidebar.appendChild(folderHeader);
 
   const updateFolderLinks = () => {
@@ -35,20 +66,27 @@
   };
 
   updateFolderLinks();
-
   const observer = new MutationObserver(() => {
-    document.querySelectorAll(".YVvGBb").forEach(card => {
-      const classId = card.getAttribute("href")?.split("/").pop();
+    // Look for course cards using multiple possible selectors
+    document.querySelectorAll(".YVvGBb, .gHz6xd, [data-course-id]").forEach(card => {
+      // Try to get class ID from multiple possible sources
+      const classId = card.getAttribute("data-course-id") || 
+                     card.getAttribute("href")?.split("/").pop() ||
+                     card.querySelector("[data-course-id]")?.getAttribute("data-course-id");
+                     
       if (!classId || card.dataset.folderInjected) return;
       card.dataset.folderInjected = true;
       card.dataset.classroomId = classId;
-      card.dataset.folder = "";
-
-      const kebab = card.querySelector(".U26fgb");
-      if (!kebab) return;
+      card.dataset.folder = "";      // Try to find the menu button using multiple selectors
+      const kebab = card.querySelector(".U26fgb, .VfPpkd-Bz112c-LgbsSe, .uRHG6, [aria-label='More actions']");
+      if (!kebab) {
+        console.debug('Could not find menu button for class:', classId);
+        return;
+      }
 
       const menu = document.createElement("div");
       menu.style.position = "absolute";
+      menu.style.zIndex = "9999";
       menu.style.background = "white";
       menu.style.border = "1px solid #ccc";
       menu.style.padding = "5px";
