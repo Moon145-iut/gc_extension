@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Google Classroom Folder Organizer",
+  "version": "1.0",
+  "permissions": ["storage", "scripting", "identity", "activeTab"],
+  "host_permissions": ["https://classroom.google.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://classroom.google.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}
